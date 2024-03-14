@@ -1,0 +1,10 @@
+defaultNamespace: thanos-system
+helm:
+  releaseName: thanos-monitoring
+  repo: "https://charts.bitnami.com/bitnami"
+  chart: "thanos"
+  version: "12.23.2"
+  valuesFiles:
+    - values.yaml
+kustomize:
+  dir: base
