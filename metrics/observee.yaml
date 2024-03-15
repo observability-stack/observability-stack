@@ -1,0 +1,18 @@
+apiVersion: fleet.cattle.io/v1alpha1
+kind: GitRepo
+metadata:
+  name: observee-metrics
+  namespace: fleet-default
+  labels:
+    component: metrics
+    role: observee
+spec:
+#  repo: <your-gitops-private-repo>
+#  branch: <branchname> # main by default
+#  clientSecretName: <gitrepo-private-secretname> # only required for private repos
+#  insecureSkipTLSVerify: false
+  paths:
+    - metrics/tools/prometheus/rancher-monitoring-crd
+    - metrics/tools/prometheus/rancher-monitoring
+  targets:
+    - clusterGroup: observee-clusters
