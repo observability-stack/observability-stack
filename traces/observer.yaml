@@ -1,11 +1,11 @@
 apiVersion: fleet.cattle.io/v1alpha1
 kind: GitRepo
 metadata:
-  name: observee-traces
+  name: observer-traces
   namespace: fleet-default
   labels:
     component: traces
-    role: observee
+    role: observer
 spec:
 #  repo: <your-gitops-private-repo>
 #  branch: <branchname> # main by default
@@ -17,4 +17,4 @@ spec:
     - traces/tools/opentelemetry/operator
     - traces/tools/opentelemetry/collector
   targets:
-    - clusterGroup: observee-clusters
+    - clusterGroup: observer-clusters
