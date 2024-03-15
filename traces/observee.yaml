@@ -1,0 +1,20 @@
+apiVersion: fleet.cattle.io/v1alpha1
+kind: GitRepo
+metadata:
+  name: observee-traces
+  namespace: fleet-default
+  labels:
+    component: traces
+    role: observee
+spec:
+#  repo: <your-gitops-private-repo>
+#  branch: <branchname> # main by default
+#  clientSecretName: <gitrepo-private-secretname>
+#  insecureSkipTLSVerify: false
+  paths:
+    - traces/tools/jaeger/operator
+    - traces/tools/jaeger/cluster
+    - traces/tools/opentelemetry/operator
+    - traces/tools/opentelemetry/collector
+  targets:
+    - clusterGroup: observee-clusters
