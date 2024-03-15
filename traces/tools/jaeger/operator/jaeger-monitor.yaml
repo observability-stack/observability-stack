@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: jaeger-operator
+  labels:
+    app: jaeger-operator
+spec:
+  namespaceSelector:
+    matchNames:
+      - operators
+  selector:
+    matchLabels:
+      name: jaeger-operator
+      app.kubernetes.io/component: metrics
+  endpoints:
+    - port: https
+      path: /metrics

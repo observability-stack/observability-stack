@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-envoy-sidecar
+  labels:
+    name: thanos-envoy-sidecar
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/component: query
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: thanos
+  ports:
+    - name: envoy-eo4eu-ope
+      protocol: TCP
+      port: 10000
+      targetPort: 10000
+    - name: envoy-aiml
+      protocol: TCP
+      port: 10001
+      targetPort: 10001
+    - name: envoy-inference
+      protocol: TCP
+      port: 10002
+      targetPort: 10002
+    - name: envoy-mgmnt-ope
+      protocol: TCP
+      port: 10003
+      targetPort: 10003
+  sessionAffinity: "None"

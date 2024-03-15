@@ -1,0 +1,3 @@
+resources:
+  - thanos-storage-secret.yaml
+  - envoy-v3.yaml
