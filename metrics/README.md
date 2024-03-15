@@ -12,7 +12,7 @@ type: S3
 config:
   bucket: <thanos-object-storage-bucket-name>
   endpoint: <s3-endpoint>
-  region: us-east-1
+  region: <region>
   aws_sdk_auth: false
   access_key: <access_key>
   insecure: false
