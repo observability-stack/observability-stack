@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels: {}
+  name: otel-collector-metrics
+spec:
+  endpoints:
+    - interval: 30s
+      path: /metrics
+      port: monitoring
+      scheme: http
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: otel-system-collector-monitoring

@@ -1,0 +1,4 @@
+resources:
+  - clusterrole.yaml
+  - opentelemetry-collector.yaml
+  - opentelemetry-service-monitor.yaml
