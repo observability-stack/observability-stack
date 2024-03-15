@@ -1,0 +1,11 @@
+global:
+  cattle:
+    psp:
+      enabled: false 
+    url: https://<rancherclustermanager-url> # set rancher cluster manager fqdn
+  systemDefaultRegistry: ''
+image:
+  repository: rancher/shell
+  tag: v0.1.18
+nodeSelector: {}
+tolerations: null
