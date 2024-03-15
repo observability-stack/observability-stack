@@ -1,0 +1,6 @@
+defaultNamespace: opensearch-system
+helm:
+  releaseName: opensearch-operator
+  repo: "https://opensearch-project.github.io/opensearch-k8s-operator"
+  chart: "opensearch-operator"
+  version: "2.4.0"
