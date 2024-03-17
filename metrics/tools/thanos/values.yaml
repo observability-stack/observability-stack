@@ -7,40 +7,7 @@ query:
     - "rule_replica"
   dnsDiscovery:
     sidecarsService: "prometheus-operated"
-    sidecarsNamespace: "cattle-monitoring-system"
-  sidecars:
-    - name: observer-envoy-sidecar
-      args:
-        - "-c"
-        - /config/envoy.yaml
-      image: "envoyproxy/envoy:v1.16.0"
-      ports:
-        - name: envoy-eo4eu-ope
-          containerPort: 10000
-          protocol: TCP
-        - name: envoy-aiml
-          containerPort: 10001
-          protocol: TCP
-        - name: envoy-inference
-          containerPort: 10002
-          protocol: TCP
-        - name: envoy-mgmnt-ope
-          containerPort: 10003
-          protocol: TCP
-      volumeMounts:
-        - name: envoy-config
-          mountPath: "/config"
-          mountPropagation: None
-  extraVolumes:
-    - name: envoy-config
-      configMap:
-        name: thanos-envoy-config
-        defaultMode: 420
-        optional: false
-# If you are using envoy sidecar to query data from prometheus sidecar from observee cluster, uncomment the next field
-#  stores:
-#    - "dnssrv+_envoy-<observee-cluster01>._tcp.thanos-envoy-sidecar.thanos-system.svc.<clusterdomain>.local"
-#    - "dnssrv+_envoy-<observee-cluster02>._tcp.thanos-envoy-sidecar.thanos-system.svc.<clusterdomain>.local"
+    sidecarsNamespace: "cattle-monitoring-system"  # the namespace of the prometheus deployment. (this is cattle-monitoring-system for rancher-monitoring operator)
   nodeSelector: "kubernetes.io/os: linux"
   serviceAccount:
     create: true
@@ -85,7 +52,7 @@ metrics:
   enabled: true # enable for thanos metrics monitoring.
   serviceMonitor:
     enabled: true # serviceMonitor for Prometheus
-    namespace: "thanos-system"
+    namespace: "thanos-system" # for rancher-monitoring prometheus deployments, you can use cattle-monitoring-system namespace
 minio:
   enabled: false
 networkPolicy:

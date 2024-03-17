@@ -1,0 +1,39 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: jaeger-query
+  labels:
+    app: jaeger
+    component: query
+spec:
+  namespaceSelector:
+    matchNames:
+      - tracing-system
+  selector:
+    matchLabels:
+      app: jaeger
+      app.kubernetes.io/component: service-query
+      app.kubernetes.io/name: jaeger-tracing-query
+  endpoints:
+    - port: admin-http
+      path: /metrics
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: jaeger-collector
+  labels:
+    app: jaeger
+    component: collector
+spec:
+  namespaceSelector:
+    matchNames:
+      - tracing-system
+  selector:
+    matchLabels:
+      app: jaeger
+      app.kubernetes.io/component: service-collector
+      app.kubernetes.io/name: jaeger-tracing-collector
+  endpoints:
+    - port: admin-http
+      path: /metrics

@@ -1,0 +1,6 @@
+defaultNamespace: tracing-system
+targetCustomizations:
+  - name: observer-cluster
+    clusterName: observer-cluster
+    kustomize:
+      dir: overlays/observer-cluster

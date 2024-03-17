@@ -1,0 +1,26 @@
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: jaeger-tracing
+spec:
+  strategy: production
+  collector:
+    maxReplicas: 5
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+  storage:
+    type: elasticsearch
+    options:
+      es.server-urls: https://<opensearch-api-externalURL>
+      es.num-shards: 3
+      es.num-replicas: 0
+      es.use-aliases: false
+      es.index-prefix: traces
+      es.tls.skip-host-verify: true
+    secretName: opensearch-admin-credential
+  query:
+    enabled: false
+  ingress:
+    enabled: false

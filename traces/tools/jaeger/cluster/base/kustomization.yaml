@@ -1,0 +1,4 @@
+resources:
+  - jaeger.yaml
+#  - opensearch-admin-credential.yaml
+  - jaeger-monitor.yaml

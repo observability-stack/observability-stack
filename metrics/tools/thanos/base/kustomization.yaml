@@ -1,2 +1,2 @@
-resources:
-  - envoy-v3.yaml
+#resources:
+#  - envoy-v3.yaml
