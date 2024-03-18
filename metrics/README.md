@@ -291,5 +291,108 @@ spec:
 For an automated setup, the S3 connection secret `thanos-s3-creds.yaml` should be integrated into the `base` directory alongside the Prometheus components. A corresponding `kustomization.yaml` file ensures the automatic creation of the secret. This setup supports both regular Kubernetes secrets (without encryption) and more secure approaches like integrating with [HashiCorp Vault](https://www.vaultproject.io/), utilizing the [external-secrets-operator](https://external-secrets.io/latest/) to import the secret as an ExternalSecret object.
 
 ## Metrics Tools: Grafana
-To be complated
+The Observability Stack uses [grafana-operator](https://grafana.github.io/grafana-operator/) for deploying and managing the Grafana instance, which serves as the visualization layer for the observability data collected. 
 
+The deployment of the operator itself is via using the [OperatorHub.io](https://operatorhub.io/operator/grafana-operator).
+
+### Advanced Configuration
+ 
+#### Datasources Configuration
+
+While Grafana's datasources can be configured manually, such configurations are not persistent across restarts due to Grafana being stateless by default. Therefore, static configurations can be achieved by creating a `datasources.yaml` file in the `base` directory. Examples of YAML manifests for setting up observability datasources are provided below and are also available in the base directory for use.
+
+```yaml
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: monitoring-thanos
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  datasource:
+    name: Thanos
+    type: prometheus
+    access: proxy
+    url: "http://thanos-monitoring-query-frontend.thanos-system.svc.[clusterDomain].local":9090"
+    isDefault: true
+    jsonData:
+      "tlsSkipVerify": false
+      "timeInterval": "30s" # solves dashboards not showing correctly. See https://github.com# solves dashboards not showing correctly. See https://github.com/rfmoz/grafana-dashboards/issues/72#issuecomment-880484961/rfmoz/grafana-dashboards/issues/72#issuecomment-880484961
+    editable: true
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: logging-opensearch
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  datasource:
+    name: Logs
+    type: grafana-opensearch-datasource
+    access: proxy
+    url: "https://logging-cluster.opensearch-system.svc.[clusterDomain].local:9200"
+    basicAuth: true
+    basicAuthUser: ${username}
+    isDefault: false
+    jsonData:
+      "tlsSkipVerify": true
+      "pplEnabled": true
+      # "database": "logs-*" # opensearch index
+      "timeInterval": "10s"
+      "timeField": "@timestamp"
+      "version": "2.8.0"
+      "flavor": "opensearch"
+    secureJsonData:
+      "password": ${password}
+    editable: true
+  valuesFrom:
+    - targetPath: basicAuthUser
+      valueFrom:
+        secretKeyRef:
+          name: grafana-opensearch-cred
+          key: username
+    - targetPath: "secureJsonData.password"
+      valueFrom:
+        secretKeyRef:
+          name: grafana-opensearch-cred
+          key: password
+  plugins:
+    - name: grafana-opensearch-datasource
+      version: 2.14.4
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: tracing-jaeger
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  datasource:
+    name: Traces
+    type: jaeger
+    access: proxy
+    url: "http://jaeger-tracing-query.tracing-system.svc.[clusterDomain].local:16686"
+    isDefault: false
+    editable: true
+```
+For integrating the Opensearch datasource into Grafana, you need to create a `secretKeyRef` called `grafana-opensearch-cred` with key/value pair `username` and `password` to be used by the Opensearch datasource plugin to authenticate with Opensearch. This credential storage can be achieved through a standard Kubernetes secret or with an `ExternalSecret`.
+
+#### Alerts
+
+Please refer the deticated `README.md`file under `alerts`.
+
+#### Dashboards
+
+Please refer the deticated `README.md`file under `instance/base/dashboards`.
+
+#### Grafana deployment with Keycloak OAuth2 SSO configuration
+
+[Please follow official guide from the Grafana-operator documentation](https://grafana.github.io/grafana-operator/docs/examples/grafana_keycloak_sso/readme/).
+
+#### Ingress
+
+[Please follow official guide from the Grafana-operator documentation](https://grafana.github.io/grafana-operator/docs/examples/ingress_https/readme/).

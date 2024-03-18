@@ -1,0 +1,76 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: monitoring-thanos
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  datasource:
+    name: Thanos
+    type: prometheus
+    access: proxy
+    url: "http://thanos-monitoring-query-frontend.thanos-system.svc.[clusterDomain].local:9090"
+    isDefault: true
+    jsonData:
+      "tlsSkipVerify": false
+      "timeInterval": "30s" # solves dashboards not showing correctly. See https://github.com# solves dashboards not showing correctly. See https://github.com/rfmoz/grafana-dashboards/issues/72#issuecomment-880484961/rfmoz/grafana-dashboards/issues/72#issuecomment-880484961
+    editable: true
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: logging-opensearch
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  datasource:
+    name: Logs
+    type: grafana-opensearch-datasource
+    access: proxy
+    url: "https://logging-cluster.opensearch-system.svc.[clusterDomain].local:9200"
+    basicAuth: true
+    basicAuthUser: ${username}
+    isDefault: false
+    jsonData:
+      "tlsSkipVerify": true
+      "pplEnabled": true
+      # "database": "logs-*" # opensearch index
+      "timeInterval": "10s"
+      "timeField": "@timestamp"
+      "version": "2.8.0"
+      "flavor": "opensearch"
+    secureJsonData:
+      "password": ${password}
+    editable: true
+  valuesFrom:
+    - targetPath: basicAuthUser
+      valueFrom:
+        secretKeyRef:
+          name: grafana-opensearch-cred
+          key: username
+    - targetPath: "secureJsonData.password"
+      valueFrom:
+        secretKeyRef:
+          name: grafana-opensearch-cred
+          key: password
+  plugins:
+    - name: grafana-opensearch-datasource
+      version: 2.14.4
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: tracing-jaeger
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  datasource:
+    name: Traces
+    type: jaeger
+    access: proxy
+    url: "http://jaeger-tracing-query.tracing-system.svc.[clusterDomain].local:16686"
+    isDefault: false
+    editable: true

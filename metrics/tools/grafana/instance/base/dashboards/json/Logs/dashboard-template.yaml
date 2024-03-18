@@ -1,0 +1,16 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: <NAME>
+spec:
+  folder: "<FOLDER>"
+  resyncPeriod: "15s" # solves Dashboard continuously updating. See https://github.com/grafana-operator/grafana-operator/issues/1045
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  datasources: # Solves datasource not found error
+    - inputName: DS_LOGS
+      datasourceName: Logs
+    - inputName: DS_THANOS
+      datasourceName: Thanos
+  json: |

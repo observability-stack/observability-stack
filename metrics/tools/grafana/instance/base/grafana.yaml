@@ -1,0 +1,31 @@
+kind: Grafana
+apiVersion: grafana.integreatly.org/v1beta1
+metadata:
+  name: grafana
+  labels:
+    dashboards: grafana
+spec:
+  persistentVolumeClaim:
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: csi-cinder-sc-delete
+      volumeMode: Filesystem
+  config:
+    log:
+      mode: console
+      level: warn
+    server:
+      domain: monitoring.observability.internal.eo4eu.eu
+      protocol: http
+      https_port: "443"
+      root_url: "https://%(domain)s/"
+    auth:
+      disable_login_form: "false"
+    security:
+      admin_user: root
+      admin_password: secret
+
