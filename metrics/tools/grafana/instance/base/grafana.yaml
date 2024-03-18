@@ -12,14 +12,14 @@ spec:
       resources:
         requests:
           storage: 10Gi
-      storageClassName: csi-cinder-sc-delete
+      storageClassName: <storageClass-name> # set your own storage class
       volumeMode: Filesystem
   config:
     log:
       mode: console
       level: warn
     server:
-      domain: monitoring.observability.internal.eo4eu.eu
+      domain: monitoring.observability.[yourdomain].com
       protocol: http
       https_port: "443"
       root_url: "https://%(domain)s/"
