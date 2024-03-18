@@ -1,0 +1,23 @@
+defaultNamespace: cattle-monitoring-system
+helm:
+  releaseName: rancher-monitoring
+  chart: "rancher-monitoring"
+  repo: "https://charts.rancher.io"
+  version: "102.0.0+up40.1.2"
+  values:
+    replication: false
+    prometheus:
+      prometheusSpec:
+        externalLabels:
+          clusterName: "${ .ClusterName }"
+  valuesFiles:
+    - values.yaml
+targetCustomizations:
+  - name: observer-cluster
+    clusterName: observer-cluster
+    kustomize:
+      dir: overlays/observer-cluster
+  - name: observee-cluster01
+    clusterName: observee-cluster01
+    kustomize:
+      dir: overlays/observee-cluster01

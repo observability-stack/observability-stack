@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: observability-thanos-gateway
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/grpc-backend: "true"
+    nginx.ingress.kubernetes.io/protocol: "h2c"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "160"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: REPLACE_WITH_CLUSTER_NAME.observability.[yourdomain].com
+      http:
+        paths:
+          - backend:
+              service:
+                name: prometheus-operated
+                port:
+                  number: 10901
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - REPLACE_WITH_CLUSTER_NAME.observability.[yourdomain].com
+      secretName: thanos-gateway-tls

@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: observability-thanos-gateway
+  annotations:
+#    cert-manager.io/cluster-issuer: clusterissuer # if you have cert-manager installed in the cluser, you can also automate the ssl certificate creation.
+spec:
+  rules:
+    - host: prometheus-observee-cluster01.observability.[yourdomain].com
+      http:
+        paths:
+          - backend:
+              service:
+                name: prometheus-operated
+                port:
+                  number: 10901
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - prometheus-observee-cluster01.observability.[yourdomain].com
+      secretName: thanos-gateway-tls
+
+
+      

@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: rancher-monitoring-thanos-sidecar
+  labels:
+    app: rancher-monitoring-prometheus
+spec:
+  namespaceSelector:
+    matchNames:
+      - cattle-monitoring-system
+  selector:
+    matchLabels:
+      app: rancher-monitoring-thanos-discovery
+      release: rancher-monitoring
+  endpoints:
+    - port: http
+      path: /metrics

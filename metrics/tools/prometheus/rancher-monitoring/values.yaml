@@ -1,0 +1,24 @@
+nameOverride: rancher-monitoring
+namespaceOverride: cattle-monitoring-system
+global:
+  cattle:
+    clusterId: global.fleet.clusterLabels.management.cattle.io/cluster-name
+    clusterName: global.fleet.clusterLabels.management.cattle.io/cluster-display-name
+    psp:
+      enabled: false
+    windows:
+      enabled: false
+  rbac:
+    create: true
+    userRoles:
+      aggregateToDefaultRoles: true
+      create: true
+  seLinux:
+    enabled: false
+prometheus:
+  prometheusSpec:
+    thanos:
+      image: quay.io/thanos/thanos:v0.34.0
+      objectStorageConfig:
+        key: thanos.yaml
+        name: thanos-objectstorage
