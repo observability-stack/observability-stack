@@ -1,0 +1,70 @@
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: ClusterFlow
+metadata:
+  name: cluster-wide-logging
+spec:
+  filters:
+    - detectExceptions:
+        languages:
+          - java
+          - python
+          - go
+        multilineFlushInterval: 60s
+    - tag_normaliser: {}
+    - parser:
+        remove_key_name_field: true
+        reserve_data: true
+        parse:
+          type: multi_format
+          patterns:
+            - format: json # Assuming you want to parse JSON formatted logs
+            - format: syslog # Assuming you want to parse syslog formatted logs
+              # Additional configuration for syslog parsing might be required here
+            - format: none
+  globalOutputRefs:
+    - cluster-wide-logging # ClusterOutput name
+  match:
+    - select: {}
+    - exclude:
+        labels:
+          app.kubernetes.io/instance : rke2-ingress-nginx # if you are using a Rancher provided ingress-nginx chart. you can overwrite this value with your ingress controller implementation.
+---
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: ClusterFlow
+metadata:
+  name: ingress-logging
+spec:
+  filters:
+    - tag_normaliser: {}
+    - parser:
+        parse:
+          type: multi_format
+          patterns:
+            - format: json # Assuming you want to parse JSON formatted logs
+            - format: syslog # Assuming you want to parse syslog formatted logs
+              # Additional configuration for syslog parsing might be required here
+            - format: none
+        remove_key_name_field: true
+        reserve_data: true
+    - record_modifier:
+        records:
+          - geoip.ip: '${ record["remote_addr"] }'
+    - geoip:
+       geoip_lookup_keys: "remote_addr"
+       backend_library: geoip2_c
+       skip_adding_null_record: false
+       records:
+         - geoip.country_name: '${country.names.en["remote_addr"]}'
+           geoip.country_iso_code: '${country.iso_code["remote_addr"]}'
+           geoip.city_name: '${city.names.en["remote_addr"]}'
+           geoip.region_iso_code: '${subdivisions.0.iso_code["remote_addr"]}'
+           geoip.region_name: '${subdivisions.0.names.en["remote_addr"]}'
+           geoip.location: '''[${location.longitude["remote_addr"]},${location.latitude["remote_addr"]}]'''
+           geoip.latitude: '${location.latitude["remote_addr"]}'
+           geoip.longitude: '${location.longitude["remote_addr"]}'
+  globalOutputRefs:
+    - ingress-logging # ClusterOutput name
+  match:
+    - select:
+        container_names:
+          - rke2-ingress-nginx-controller # if you are using a Rancher provided ingress-nginx chart. you can overwrite this value with your ingress controller implementation.

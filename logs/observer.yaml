@@ -1,0 +1,25 @@
+apiVersion: fleet.cattle.io/v1alpha1
+kind: GitRepo
+metadata:
+  name: observer-logs
+  namespace: fleet-default
+  labels:
+    component: logs
+    role: observer
+spec:
+#  repo: <your-gitops-private-repo>
+#  branch: <branchname> # main by default
+#  clientSecretName: <gitrepo-private-secretname> # only required for private repos
+#  insecureSkipTLSVerify: false
+  paths:
+    - logs/tools/opensearch/operator
+    - logs/tools/opensearch/cluster
+    - logs/tools/fluent/rancher-logging-operator-crd
+    - logs/tools/fluent/rancher-logging-operator
+    - logs/tools/fluent/pipelines
+  targets:
+    - clusterGroup: observer-clusters
+  bundleDeployment:
+    spec:
+      dependsOn:
+        - bundleRef: "observer-logs-logs-tools-opensearch-operator" # This makes "opensearch-cluster" depend on "opensearch-operator"

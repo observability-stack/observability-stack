@@ -1,0 +1,10 @@
+defaultNamespace: cattle-logging-system
+helm:
+  releaseName: rancher-logging-operator
+  repo: "https://charts.rancher.io"
+  chart: "rancher-logging"
+  version: "103.0.0+up3.17.10"
+  valuesFiles:
+    - values.yaml
+kustomize:
+  dir: overlays/logging

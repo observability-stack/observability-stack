@@ -1,0 +1,10 @@
+defaultNamespace: cattle-logging-system
+targetCustomizations:
+  - name: observer-cluster
+    clusterName: observer-cluster
+    kustomize:
+      dir: overlays/observer-cluster
+  - name: observee-cluster01
+    clusterName: observee-cluster01
+    kustomize:
+      dir: overlays/observee-cluster01

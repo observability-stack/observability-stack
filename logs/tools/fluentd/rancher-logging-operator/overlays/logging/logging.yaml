@@ -1,0 +1,17 @@
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: Logging
+metadata:
+  name: rancher-logging-operator-root
+  namespace: cattle-logging-system
+spec:
+  globalFilters:
+    - enhanceK8s: {}
+  filters:
+    - stdout:
+        output_type: json
+  fluentbit:
+    metrics:
+      serviceMonitor: true
+  fluentd:
+    metrics:
+      serviceMonitor: true

@@ -1,0 +1,69 @@
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: ClusterOutput
+metadata:
+  name: cluster-wide-logging
+spec:
+  opensearch:
+    # connection
+    scheme: https
+    ssl_verify: false
+    ssl_version: "TLSv1_2"
+    suppress_type_name: true
+    buffer:
+      chunk_limit_size: 16M # 32M
+      flush_at_shutdown: true
+      flush_interval: 60s
+      #flush_thread_interval: 10
+      flush_mode: interval
+      flush_thread_count: 2
+      queued_chunks_limit_size: 2
+      #queue_limit_length: 4
+      retry_forever: true
+      retry_max_interval: 30s
+      total_limit_size: 40GB # 50GB
+      type: file
+      overflow_action: block
+    # security
+    user: opensearch-admin
+    password: <password>
+#      valueFrom:
+#        secretKeyRef:
+#          name: opensearch-admin-credential
+#          key: password
+    # index management
+    include_timestamp: true
+---
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: ClusterOutput
+metadata:
+  name: ingress-logging
+spec:
+  opensearch:
+    # connection
+    scheme: https
+    ssl_verify: false
+    ssl_version: "TLSv1_2"
+    suppress_type_name: true
+    buffer:
+      chunk_limit_size: 16M # 32M
+      flush_at_shutdown: true
+      flush_interval: 60s
+      #flush_thread_interval: 10
+      flush_mode: interval
+      flush_thread_count: 2
+      queued_chunks_limit_size: 2
+      #queue_limit_length: 4
+      retry_forever: true
+      retry_max_interval: 30s
+      total_limit_size: 40GB # 50GB
+      type: file
+      overflow_action: block
+    # security
+    user: opensearch-admin
+    password: <password>
+#      valueFrom:
+#        secretKeyRef:
+#          name: opensearch-admin-credential
+#          key: password
+    # index management
+    include_timestamp: true

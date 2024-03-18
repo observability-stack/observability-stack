@@ -1,0 +1,13 @@
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: ClusterOutput
+metadata:
+  name: cluster-wide-logging
+spec:
+  opensearch:
+    # connection
+    host: opensearch-api.observability.[yourdomain].com
+    port: 443
+    template_name: logs-generic-template
+    ilm_policy_id: k8s-logs-policy
+    index_name: logs-generic-[clusterName]-%Y-%m-%d
+

@@ -1,0 +1,7 @@
+resources:
+  - ../../base
+namespace: cattle-logging-system
+patches:
+  - path: clusteroutput.yaml
+  - path: ingressoutput.yaml
+# namespace: TODO # controlNamespace in Logging resource # no because it applies also to Logging and FluentbitAgent

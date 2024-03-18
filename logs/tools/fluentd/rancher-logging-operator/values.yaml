@@ -1,0 +1,44 @@
+replication: false
+global:
+  seLinux:
+    enabled: false
+createCustomResource: true
+additionalLoggingSources:
+  rke2:
+    enabled: true # for rke2 clusters
+    stripUnderscores: false
+disablePvc: false
+fluentbit: {}
+fluentd:
+  logLevel: debug
+  metrics: true
+  serviceMonitor: true
+  replicas: 8 # replicas per cluster.
+  workers: 2 # only works for spesific logging-operator version.
+  bufferVolumeMetrics:
+    serviceMonitor: true
+  bufferStorageVolume:
+    pvc:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 40Gi
+        storageClassName: "<storageClass-name>" # please set your own storage class.
+        volumeMode: Filesystem
+  env: []
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 15
+    tcpSocket:
+      port: 24240
+  nodeSelector: {}
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 2Gi
+  tolerations: {}
