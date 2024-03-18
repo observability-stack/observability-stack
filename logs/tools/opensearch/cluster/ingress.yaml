@@ -1,0 +1,55 @@
+## To expose opensearch dashboards
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: opensearch-dashboards
+  annotations:
+#    cert-manager.io/cluster-issuer: clusterissuer
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: logs.observability.[yourdomain].com
+      http:
+        paths:
+          - backend:
+              service:
+                name: logging-cluster-dashboards
+                port:
+                  number: 5601
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - logs.observability.[yourdomain].com
+      secret_name: opensearch-dashboards-tls
+---
+## To expose opensearch api
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: opensearch-api
+  annotations:
+#    cert-manager.io/cluster-issuer: clusterissuer
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/proxy-body-size: 30m
+    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "1800" # 30 minutes
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: opensearch-api.observability.[yourdomain].com
+      http:
+        paths:
+          - backend:
+              service:
+                name: logging-cluster
+                port:
+                  number: 9200
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - opensearch-api.observability.[yourdomain].com
+      secret_name: opensearch-api-dashboards-tls

@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: logging-cluster-monitor
+  annotations: {}
+  labels:
+    opster.io/opensearch-cluster: logging-cluster
+    prometheus-exporter: "true"
+  namespace: opensearch-system
+spec:
+  selector:
+    opster.io/opensearch-cluster: logging-cluster
+  ports:
+    - name: http
+      port: 9200
+      protocol: TCP
+      targetPort: 9200
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: logging-cluster-metrics
+  namespace: opensearch-system
+spec:
+  namespaceSelector:
+    matchNames:
+      - opensearch-system
+  selector:
+    matchLabels:
+      opster.io/opensearch-cluster: logging-cluster
+      prometheus-exporter: "true"
+  endpoints:
+    - port: http
+      interval: 15s
+      scheme: https # Use HTTPS for scraping
+      tlsConfig:
+        insecureSkipVerify: true
+      path: "/_prometheus/metrics"
+      basicAuth:
+        username:
+          name: opensearch-admin-credential
+          key: username
+        password:
+          name: opensearch-admin-credential
+          key: password
