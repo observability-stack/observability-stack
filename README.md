@@ -13,7 +13,7 @@ To be completed.
 To be completed.
 
 ## Documentation
-You can find the documentation on the [Observability Stack webpage](observability-stack.io).
+You can find the documentation on the [Observability Stack webpage](https://observability-stack.io).
 
 ## Contributing
 To be completed.
